@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Study Scheduler</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(135deg, #1e3c72, #2a5298);
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+        }
+        .container {
+            width: 400px;
+            background: rgba(255, 255, 255, 0.2);
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(10px);
+            display: none;
+        }
+        input, button {
+            width: 100%;
+            padding: 12px;
+            margin: 8px 0;
+            border: none;
+            border-radius: 6px;
+        }
+        input {
+            background: rgba(255, 255, 255, 0.9);
+            color: #333;
+        }
+        button {
+            background: #ff9800;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        button:hover {
+            background: #e68900;
+        }
+        #schedule {
+            display: none;
+        }
+        .schedule-item {
+            background: rgba(255, 255, 255, 0.9);
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 6px;
+            color: #000;
+        }
+        .tips {
+            text-align: left;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 15px;
+            border-radius: 6px;
+            margin-top: 10px;
+            color: #000;
+        }
+    </style>
+</head>
+<body>
+    <div class="container" id="signup">
+        <h2>Start Your Study Journey</h2>
+        <p>Get personalized study schedules and expert tips for success.</p>
+        <input type="text" id="name" placeholder="Full Name">
+        <input type="email" id="email" placeholder="Email">
+        <input type="password" id="signupPassword" placeholder="Password">
+        <button onclick="signup()">Get Started</button>
+        <p>Already have an account? <a href="#" onclick="showLogin()">Login</a></p>
+    </div>
+    
+    <div class="container" id="login">
+        <h2>Welcome Back!</h2>
+        <input type="email" id="loginEmail" placeholder="Email">
+        <input type="password" id="loginPassword" placeholder="Password">
+        <button onclick="login()">Login</button>
+        <p>New here? <a href="#" onclick="showSignup()">Sign Up</a></p>
+    </div>
+    
+    <div class="container" id="planner">
+        <h2>Plan Your Study</h2>
+        <input type="text" id="preparingFor" placeholder="Preparing for (Exam, Course, etc.)">
+        <input type="text" id="subjects" placeholder="Subjects (comma separated)">
+        <input type="number" id="days" placeholder="Number of study days">
+        <input type="number" id="hoursPerDay" placeholder="Hours per day">
+        <button onclick="generateSchedule()">Generate Schedule</button>
+    </div>
+    
+    <div class="container" id="schedule">
+        <h2>Your Personalized Study Schedule</h2>
+        <div id="scheduleList"></div>
+        <div class="tips" id="studyTips"></div>
+        <button onclick="goBack()">Go Back</button>
+    </div>
+
+    <script>
+        document.getElementById("signup").style.display = "block";
+
+        function showLogin() {
+            document.getElementById("signup").style.display = "none";
+            document.getElementById("login").style.display = "block";
+        }
+        
+        function showSignup() {
+            document.getElementById("login").style.display = "none";
+            document.getElementById("signup").style.display = "block";
+        }
+
+        function signup() {
+            alert("Welcome! Let's create your study plan.");
+            document.getElementById("signup").style.display = "none";
+            document.getElementById("planner").style.display = "block";
+        }
+
+        function login() {
+            alert("Login Successful!");
+            document.getElementById("login").style.display = "none";
+            document.getElementById("planner").style.display = "block";
+        }
+
+        function generateSchedule() {
+            let preparingFor = document.getElementById("preparingFor").value;
+            let subjects = document.getElementById("subjects").value.split(",").map(s => s.trim());
+            let days = parseInt(document.getElementById("days").value);
+            let hoursPerDay = parseInt(document.getElementById("hoursPerDay").value);
+
+            if (!preparingFor || subjects.length === 0 || !days || !hoursPerDay || days <= 0 || hoursPerDay <= 0) {
+                alert("Please fill all fields correctly.");
+                return;
+            }
+
+            let scheduleList = document.getElementById("scheduleList");
+            scheduleList.innerHTML = "";
+            let totalSubjects = subjects.length;
+            let sessionDuration = Math.floor(hoursPerDay * 60 / totalSubjects);
+
+            for (let i = 1; i <= days; i++) {
+                let scheduleItem = document.createElement("div");
+                scheduleItem.classList.add("schedule-item");
+                let startTime = 7 * 60;
+                let dailySchedule = `<strong>Day ${i}:</strong><br>`;
+
+                subjects.forEach(subject => {
+                    let endTime = startTime + sessionDuration;
+                    let timeSlot = `${formatTime(startTime)} - ${formatTime(endTime)}`;
+                    dailySchedule += `<strong>${timeSlot}:</strong> ${subject}<br>`;
+                    startTime = endTime + 10;
+                });
+
+                dailySchedule += "<br>📌 <strong>Evening: Mock Tests & Revision</strong>";
+                scheduleItem.innerHTML = dailySchedule;
+                scheduleList.appendChild(scheduleItem);
+            }
+
+            generateStudyTips();
+
+            document.getElementById("planner").style.display = "none";
+            document.getElementById("schedule").style.display = "block";
+        }
+
+        function formatTime(minutes) {
+            let hour = Math.floor(minutes / 60);
+            let min = minutes % 60;
+            let ampm = hour >= 12 ? "PM" : "AM";
+            hour = hour % 12 || 12;
+            return `${hour}:${min.toString().padStart(2, "0")} ${ampm}`;
+        }
+
+        function generateStudyTips() {
+            let tips = [
+                "📖 Study in a quiet place with no distractions.",
+                "⏳ Use the Pomodoro technique: Study for 25 minutes, then take a 5-minute break.",
+                "✍ Take handwritten notes to improve retention.",
+                "🎯 Set small, achievable goals for each study session.",
+                "🌱 Stay hydrated and eat brain-boosting foods.",
+                "😴 Get at least 7-8 hours of sleep before exams.",
+                "📝 Practice previous year papers and mock tests.",
+                "👥 Discuss topics with peers for better understanding."
+            ];
+            let tipsHTML = "<h3>📌 Study Tips for Success</h3><ul>";
+            tips.forEach(tip => {
+                tipsHTML += `<li>${tip}</li>`;
+            });
+            tipsHTML += "</ul>";
+            document.getElementById("studyTips").innerHTML = tipsHTML;
+        }
+
+        function goBack() {
+            document.getElementById("schedule").style.display = "none";
+            document.getElementById("planner").style.display = "block";
+        }
+    </script>
+
+</body>
+</html>

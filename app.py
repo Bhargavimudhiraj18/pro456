@@ -1,6 +1,6 @@
 import streamlit as st
 import google.generativeai as genai
- st.title('Hello, Streamlit!')
+st.title('Hello, Streamlit!')
 
 # Set up Google Gemini API Key
 GEMINI_API_KEY = "AIzaSyC7qpsSKysdqqE7tn-FxpW71h83Dkt3UtY"  # Replace with your actual API key

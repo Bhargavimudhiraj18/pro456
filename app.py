@@ -2,7 +2,7 @@ import streamlit as st
 import google.generativeai as genai
 
 # Set up Google Gemini API Key
-GEMINI_API_KEY = "AIzaSyAmbAt2a6mCtgXPbO2hTKiK9x8IMa1ojWY"  # Replace with your actual API key
+GEMINI_API_KEY = "AIzaSyC7qpsSKysdqqE7tn-FxpW71h83Dkt3UtY"  # Replace with your actual API key
 genai.configure(api_key=GEMINI_API_KEY)
 
 # Function to generate AI-powered study plan

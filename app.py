@@ -52,6 +52,15 @@ if st.sidebar.button("Generate Study Plan", key="generate_button"):
         st.write(study_plan)
     else:
         st.warning("Please enter at least one subject!")
+with open('app.py', 'r', encoding='utf-8') as file:
+    content = file.read()
+
+# Remove non-printable characters
+content = ''.join(c for c in content if c.isprintable())
+
+with open('app.py', 'w', encoding='utf-8') as file:
+    file.write(content)
+        
 
 
 
